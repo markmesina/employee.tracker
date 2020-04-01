@@ -88,9 +88,10 @@ const connection = mysql.createConnection({
     var query = "SELECT id, first_name, last_name FROM Employee WHERE id IN (SELECT manager_id FROM employee WHERE manager_id IS NOT NULL)";
     connection.query(query, function (err, res) {
       for (var i = 0; i < res.length; i++) {
-        console.log(res[i].first_name + " " + res[i].last_name + " || Id: " + res[i].id);
+        console.table(res);
       }
   
       runSearch();
     });
   }
+
