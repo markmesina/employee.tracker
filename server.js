@@ -119,8 +119,23 @@ const connection = mysql.createConnection({
     ]).then(function(res) {
         connection.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', [res.firstName, res.lastName, res.roleId, res.managerId], function(err, data) {
             if (err) throw err;
-            console.table("Successfully Inserted");
+            console.log(`${[res.firstName, res.lastName]} Successfully added`);
             runSearch();
         })
     })
-};
+  };
+
+
+  function addDepartment() {
+    inquirer.prompt([{
+        type: "input",
+        name: "department",
+        message: "What is the department that you want to add?"
+    }, ]).then(function(res) {
+        connection.query('INSERT INTO department (name) VALUES (?)', [res.department], function(err, data) {
+            if (err) throw err;
+            console.log(`${[res.department]} was Successfully Inserted`);
+            runSearch();
+        })
+    })
+  };
