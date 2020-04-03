@@ -28,6 +28,7 @@ const connection = mysql.createConnection({
           "Add Department",
           "Add Role",
           "Update Employee",
+          "Remove Employee",
           "Exit"]
   
       })
@@ -120,7 +121,7 @@ const connection = mysql.createConnection({
     ]).then(function(res) {
         connection.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', [res.firstName, res.lastName, res.roleId, res.managerId], function(err, data) {
             if (err) throw err;
-            console.log(`${[res.firstName, res.lastName]} Successfully added`);
+            console.log(`Employee ${[res.firstName]} ${[res.lastName]}, role ID ${[res.roleId]} was successfully added to report to manager ID ${[res.managerId]}`);
             runSearch();
         })
     })
@@ -135,7 +136,7 @@ const connection = mysql.createConnection({
     }, ]).then(function(res) {
         connection.query('INSERT INTO department (name) VALUES (?)', [res.department], function(err, data) {
             if (err) throw err;
-            console.log(`${[res.department]} was Successfully Inserted`);
+            console.log(`Department of ${[res.department]} was successfully created`);
             runSearch();
         })
     })
@@ -158,9 +159,9 @@ const connection = mysql.createConnection({
         }
     ]).then(function (response) {
         connection.query("INSERT INTO roles (title, salary, department_id) values (?, ?, ?)", [response.title, response.salary, response.department_id], function (err, data) {
-            console.table(data);
+            console.log(`${[response.title]} was successfully created!`);
+            runSearch();
         })
-        runSearch();
     })
 
   };
@@ -178,10 +179,29 @@ function updateEmployee() {
         }
     ]).then(function (response) {
         connection.query("UPDATE employee SET role_id = ? WHERE first_name = ?", [response.role_id, response.name], function (err, data) {
-            console.table(data);
+          if(err) throw (err);  
+          console.log(`${[response.name]} was successfully updated!`);
+          runSearch();
         })
-        runSearch();
     })
 
-  };
-  
+  };function removeEmployee() {
+  inquirer
+    .prompt({
+      name: "removeEmployee",
+      type: "input",
+      message: "To REMOVE an employee, enter the Employee id",
+
+    })
+    .then(function (answer) {
+      // console.log(answer);
+      var query = "DELETE FROM employee WHERE ?";
+      var newId = Number(answer.removeEmployee);
+      // console.log(newId);
+      connection.query(query, { id: newId }, function (err, res) {
+        if(err) throw (err);
+        console.log(`Employee number ${answer.removeEmployee} has been removed`)
+        runSearch();
+      });
+    });
+}
