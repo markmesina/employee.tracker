@@ -186,18 +186,16 @@ function updateEmployee() {
     })
 
   };function removeEmployee() {
-  inquirer
-    .prompt({
+  inquirer.prompt({
       name: "removeEmployee",
       type: "input",
       message: "To REMOVE an employee, enter the Employee id",
 
     })
     .then(function (answer) {
-      // console.log(answer);
       var query = "DELETE FROM employee WHERE ?";
       var newId = Number(answer.removeEmployee);
-      // console.log(newId);
+    
       connection.query(query, { id: newId }, function (err, res) {
         if(err) throw (err);
         console.log(`Employee number ${answer.removeEmployee} has been removed`)
