@@ -27,7 +27,7 @@ const connection = mysql.createConnection({
           "Add Employee",
           "Add Department",
           "Add Role",
-          "Remove Employee",
+          "Update Employee",
           "Exit"]
   
       })
@@ -58,6 +58,10 @@ const connection = mysql.createConnection({
             addRole();
             break;
   
+          case "Update Employee":
+            updateEmployee();
+            break;
+
           case "Remove Employee":
             removeEmployee();
             break;
@@ -87,11 +91,8 @@ const connection = mysql.createConnection({
   function viewManager() {
     var query = "SELECT id, first_name, last_name FROM Employee WHERE id IN (SELECT manager_id FROM employee WHERE manager_id IS NOT NULL)";
     connection.query(query, function (err, res) {
-      for (var i = 0; i < res.length; i++) {
         console.table(res);
-      }
-  
-      runSearch();
+        runSearch();
     });
   }
 
@@ -139,3 +140,48 @@ const connection = mysql.createConnection({
         })
     })
   };
+
+  function addRole() {
+    inquirer.prompt([
+        {
+            message: "enter title:",
+            type: "input",
+            name: "title"
+        }, {
+            message: "enter salary:",
+            type: "number",
+            name: "salary"
+        }, {
+            message: "enter department ID:",
+            type: "number",
+            name: "department_id"
+        }
+    ]).then(function (response) {
+        connection.query("INSERT INTO roles (title, salary, department_id) values (?, ?, ?)", [response.title, response.salary, response.department_id], function (err, data) {
+            console.table(data);
+        })
+        runSearch();
+    })
+
+  };
+
+function updateEmployee() {
+    inquirer.prompt([
+        {
+            message: "which employee would you like to update? (use first name only for now)",
+            type: "input",
+            name: "name"
+        }, {
+            message: "enter the new role ID:",
+            type: "number",
+            name: "role_id"
+        }
+    ]).then(function (response) {
+        connection.query("UPDATE employee SET role_id = ? WHERE first_name = ?", [response.role_id, response.name], function (err, data) {
+            console.table(data);
+        })
+        runSearch();
+    })
+
+  };
+  
